@@ -1,57 +1,72 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ClientOnly } from './ClientOnly';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-export function PWAInstaller() {
+function PWAInstallerContent() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
 
   useEffect(() => {
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker
-          .register('/sw.js')
-          .then((registration) => {
-            console.log('SW registered: ', registration);
-
-            // Check for updates
-            registration.addEventListener('updatefound', () => {
-              const newWorker = registration.installing;
-              if (newWorker) {
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // New content is available
-                    if (confirm('New version available! Reload to update?')) {
-                      window.location.reload();
-                    }
-                  }
-                });
-              }
-            });
-          })
-          .catch((registrationError) => {
-            console.log('SW registration failed: ', registrationError);
+    // Register service worker with better error handling
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      const registerSW = async () => {
+        try {
+          const registration = await navigator.serviceWorker.register('/sw.js', {
+            scope: '/',
+            updateViaCache: 'none',
           });
-      });
+          
+          console.log('Service Worker registered successfully:', registration);
+
+          // Handle updates
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('New content is available');
+                }
+              });
+            }
+          });
+
+          // Handle controller change
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Service Worker controller changed');
+          });
+
+        } catch (error) {
+          console.error('Service Worker registration failed:', error);
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        window.addEventListener('load', registerSW);
+      } else {
+        registerSW();
+      }
     }
 
     // Handle install prompt
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log('beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowInstallButton(true);
     };
 
     const handleAppInstalled = () => {
-      console.log('App was installed');
+      console.log('PWA was installed');
       setShowInstallButton(false);
       setDeferredPrompt(null);
+      setIsInstalling(false);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -66,54 +81,44 @@ export function PWAInstaller() {
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
 
-    setShowInstallButton(false);
-    deferredPrompt.prompt();
-
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+    setIsInstalling(true);
+    try {
+      await deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      console.log(`User response to the install prompt: ${outcome}`);
+      
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setShowInstallButton(false);
+      }
+    } catch (error) {
+      console.error('Install prompt failed:', error);
+    } finally {
+      setIsInstalling(false);
     }
-    setDeferredPrompt(null);
   };
 
-  if (!showInstallButton) return null;
+  if (!showInstallButton || !deferredPrompt) {
+    return null;
+  }
 
   return (
     <button
       type="button"
       onClick={handleInstallClick}
-      className="fixed bottom-4 right-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
+      disabled={isInstalling}
+      className="fixed bottom-20 right-4 z-40 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300"
     >
-      <span>📱</span>
-      <span>Install App</span>
+      {isInstalling ? 'Installing...' : 'Install App'}
     </button>
   );
 }
 
-export function PWAMeta() {
+export function PWAInstaller() {
   return (
-    <>
-      {/* PWA Meta Tags */}
-      <meta name="application-name" content="CryptoFinance Pro" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="apple-mobile-web-app-title" content="CryptoFinance Pro" />
-      <meta name="format-detection" content="telephone=no" />
-      <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="msapplication-config" content="/icons/browserconfig.xml" />
-      <meta name="msapplication-TileColor" content="#3b82f6" />
-      <meta name="msapplication-tap-highlight" content="no" />
-      <meta name="theme-color" content="#3b82f6" />
-      
-      {/* Manifest */}
-      <link rel="manifest" href="/manifest.json" />
-      
-      {/* iOS Splash Screens */}
-      <link rel="apple-touch-startup-image" href="/icons/apple-touch-icon.png" />
-      
-      {/* Preload critical resources */}
-      <link rel="preload" href="/sw.js" as="script" />
-      <link rel="preconnect" href="https://api.coingecko.com" />
-    </>
+    <ClientOnly>
+      <PWAInstallerContent />
+    </ClientOnly>
   );
 }

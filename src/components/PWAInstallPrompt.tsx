@@ -2,25 +2,20 @@
 
 import { X, Download, Smartphone, Monitor } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { ClientOnly } from './ClientOnly';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-export function PWAInstallPrompt() {
+function PWAInstallPromptContent() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
     // Check if running on iOS
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     setIsIOS(iOS);
@@ -33,6 +28,10 @@ export function PWAInstallPrompt() {
 
     // Don't show banner if already installed
     if (isInstalled) return;
+
+    // Check if dismissed in this session
+    const isDismissed = sessionStorage.getItem('installPromptDismissed');
+    if (isDismissed) return;
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
@@ -57,7 +56,7 @@ export function PWAInstallPrompt() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, [isClient]);
+  }, []);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -73,21 +72,11 @@ export function PWAInstallPrompt() {
 
   const handleDismiss = () => {
     setShowInstallBanner(false);
-    // Remember dismissal for this session (client-side only)
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('installPromptDismissed', 'true');
-    }
+    sessionStorage.setItem('installPromptDismissed', 'true');
   };
-
-  // Don't show if dismissed in this session (client-side only)
-  const isDismissed = typeof window !== 'undefined' && sessionStorage.getItem('installPromptDismissed');
-  if (isDismissed) return null;
 
   // Don't show if already installed
   if (isInstalled) return null;
-
-  // Don't render during SSR
-  if (!isClient) return null;
 
   return (
     <>
@@ -168,5 +157,13 @@ export function PWAInstallPrompt() {
         </div>
       )}
     </>
+  );
+}
+
+export function PWAInstallPrompt() {
+  return (
+    <ClientOnly>
+      <PWAInstallPromptContent />
+    </ClientOnly>
   );
 }

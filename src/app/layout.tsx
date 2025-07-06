@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { PWAInstaller, PWAMeta } from '@/components/PWAInstaller';
+import { PWAInstaller } from '@/components/PWAInstaller';
 import { PWAStatusChecker } from '@/components/PWAStatusChecker';
 
 const inter = Inter({
@@ -122,8 +122,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
-        <PWAMeta />
-        
         {/* Preconnect to external resources */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
