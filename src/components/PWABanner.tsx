@@ -8,8 +8,11 @@ export function PWABanner() {
   const [showBanner, setShowBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
     // Check if running as PWA
     const standalone = window.matchMedia('(display-mode: standalone)').matches;
     setIsStandalone(standalone);
@@ -39,6 +42,9 @@ export function PWABanner() {
     }
   }, []);
 
+  // Don't render anything until mounted to prevent SSR issues
+  if (!isMounted || !showBanner || isStandalone) return null;
+
   const handleInstall = () => {
     if (isIOS) {
       // Show iOS install instructions
@@ -52,8 +58,9 @@ export function PWABanner() {
     localStorage.setItem('pwa-banner-dismissed', Date.now().toString());
   };
 
-  // Don't show if already dismissed recently (within 7 days)
+  // Check if already dismissed recently (within 7 days)
   useEffect(() => {
+    if (!isMounted) return;
     const dismissed = localStorage.getItem('pwa-banner-dismissed');
     if (dismissed) {
       const dismissedTime = Number.parseInt(dismissed, 10);
@@ -62,9 +69,7 @@ export function PWABanner() {
         setShowBanner(false);
       }
     }
-  }, []);
-
-  if (!showBanner || isStandalone) return null;
+  }, [isMounted]);
 
   return (
     <motion.div
@@ -119,6 +124,12 @@ export function PWABanner() {
 }
 
 export function PWAFeatures() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const features = [
     {
       icon: <Smartphone className="w-6 h-6" />,
@@ -136,6 +147,8 @@ export function PWAFeatures() {
       description: 'Access cached data and essential features even without internet',
     },
   ];
+
+  if (!isMounted) return null;
 
   return (
     <section className="py-16 bg-gray-800/50">

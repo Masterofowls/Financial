@@ -10,6 +10,7 @@ import { ParallaxProvider } from '@/components/ParallaxProvider';
 import { PriceTicker } from '@/components/PriceTicker';
 import { PWABanner, PWAFeatures } from '@/components/PWABanner';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
+import { ClientOnly } from '@/components/ClientOnly';
 
 export default function HomePage() {
   return (
@@ -25,8 +26,10 @@ export default function HomePage() {
           <ContactSection />
         </main>
         <Footer />
-        <PWABanner />
-        <PWAInstallPrompt />
+        <ClientOnly>
+          <PWABanner />
+          <PWAInstallPrompt />
+        </ClientOnly>
       </div>
     </ParallaxProvider>
   );
