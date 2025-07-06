@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { PWAInstaller, PWAMeta } from '@/components/PWAInstaller';
+import { PWAStatusChecker } from '@/components/PWAStatusChecker';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -131,6 +132,7 @@ export default function RootLayout({
         <div id="root">{children}</div>
         <div id="modal-root" />
         <PWAInstaller />
+        <PWAStatusChecker />
       </body>
     </html>
   );
