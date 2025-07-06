@@ -8,6 +8,7 @@ import { Hero } from '@/components/Hero';
 import { OffersSection } from '@/components/OffersSection';
 import { ParallaxProvider } from '@/components/ParallaxProvider';
 import { PriceTicker } from '@/components/PriceTicker';
+import { PWABanner, PWAFeatures } from '@/components/PWABanner';
 
 export default function HomePage() {
   return (
@@ -19,9 +20,11 @@ export default function HomePage() {
           <Hero />
           <CryptoChart />
           <OffersSection />
+          <PWAFeatures />
           <ContactSection />
         </main>
         <Footer />
+        <PWABanner />
       </div>
     </ParallaxProvider>
   );
