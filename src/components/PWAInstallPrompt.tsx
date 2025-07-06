@@ -37,10 +37,15 @@ function PWAInstallPromptContent() {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
-      // Show banner after a delay
+      // Show banner after user interaction instead of immediately
+      // Only show after user has been on the site for a while
       setTimeout(() => {
-        setShowInstallBanner(true);
-      }, 3000);
+        // Check if user is still on the page and hasn't dismissed
+        const isDismissed = sessionStorage.getItem('installPromptDismissed');
+        if (!isDismissed && !isInstalled) {
+          setShowInstallBanner(true);
+        }
+      }, 10000); // Show after 10 seconds instead of 3
     };
 
     const handleAppInstalled = () => {

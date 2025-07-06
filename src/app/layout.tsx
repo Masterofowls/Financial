@@ -125,6 +125,10 @@ export default function RootLayout({
         {/* Preconnect to external resources */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Prevent browser PWA installation prompts and overlays */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="msapplication-starturl" content="/" />
       </head>
       <body className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
         <div id="root">{children}</div>

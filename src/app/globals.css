@@ -105,6 +105,58 @@ body {
   transform: translateZ(0);
 }
 
+/* PWA and Browser Overlay Prevention */
+/* Hide browser-generated PWA install prompts and overlays */
+*::-webkit-install-banner,
+*::-webkit-install-prompt,
+body::before,
+html::before {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Ensure no gray overlay on non-installed PWAs */
+body {
+  filter: none !important;
+  opacity: 1 !important;
+  -webkit-app-region: no-drag !important;
+}
+
+/* Hide any browser-specific PWA overlays */
+.pwa-banner,
+.pwa-overlay,
+[data-pwa-banner],
+[data-install-prompt] {
+  display: none !important;
+}
+
+/* Prevent any webkit overlays or filters */
+body, html {
+  -webkit-filter: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Override any potential gray overlays from PWA detection */
+@media not all and (display-mode: standalone) {
+  body {
+    background-color: #111827 !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Ensure app looks clean in browser mode */
+@media (display-mode: browser) {
+  body {
+    filter: none !important;
+    opacity: 1 !important;
+    background: #111827 !important;
+  }
+}
+
 /* Animation classes */
 .fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;

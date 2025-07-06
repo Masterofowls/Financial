@@ -18,14 +18,24 @@ export function PWABanner() {
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     setIsIOS(iOS);
 
-    // Show banner if not PWA and conditions are met
-    if (!standalone && (iOS || !iOS)) {
-      // Show banner after a delay to avoid being intrusive
-      const timer = setTimeout(() => {
-        setShowBanner(true);
-      }, 5000);
+    // Only show banner after user interaction and if not PWA
+    // Make it less intrusive by requiring user to scroll down first
+    if (!standalone) {
+      let hasScrolled = false;
+      const handleScroll = () => {
+        if (!hasScrolled && window.scrollY > 100) {
+          hasScrolled = true;
+          // Show banner after scrolling and a longer delay
+          const timer = setTimeout(() => {
+            setShowBanner(true);
+          }, 8000); // Increased delay
 
-      return () => clearTimeout(timer);
+          return () => clearTimeout(timer);
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
     }
   }, []);
 
