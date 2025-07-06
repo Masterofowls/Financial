@@ -1,17 +1,29 @@
 # CryptoFinance Pro - Modern Cryptocurrency Trading Platform
 
-A cutting-edge Next.js cryptocurrency trading platform with real-time charts, advanced analytics, and modern UI/UX design.
+A cutting-edge Next.js cryptocurrency trading platform with real-time charts, advanced analytics, and modern UI/UX design. **Now available as a Progressive Web App (PWA)** for installation on any device!
 
 ## 🚀 Features
 
+### 🌟 Core Features
 - **Modern Design**: Beautiful, responsive UI with Tailwind CSS
 - **Real-time Data**: Live cryptocurrency price charts using Recharts
+- **Advanced Analytics**: Market indicators, trading tools, and portfolio tracking
+- **Professional Trading**: Order placement, price alerts, and market analysis
 - **Parallax Effects**: Smooth scrolling and interactive animations
 - **SEO Optimized**: Perfect SEO structure with meta tags and structured data
 - **Mobile First**: Fully responsive design for all devices
 - **Performance**: Optimized for speed and Core Web Vitals
 - **TypeScript**: Fully typed for better development experience
-- **Biome.js**: Modern linting and formatting
+
+### 📱 PWA Features (NEW!)
+- **📲 Installable**: Add to home screen on any device
+- **⚡ Offline Support**: Works without internet connection
+- **🔔 Push Notifications**: Real-time market alerts
+- **🎯 App Shortcuts**: Quick access to trading, portfolio, analytics
+- **🚀 Native Performance**: Lightning-fast, app-like experience
+- **💾 Smart Caching**: Intelligent data storage and updates
+
+[**📱 Learn more about PWA features →**](./PWA_FEATURES.md)
 
 ## 🛠️ Tech Stack
 
@@ -21,6 +33,7 @@ A cutting-edge Next.js cryptocurrency trading platform with real-time charts, ad
 - **Animations**: Framer Motion
 - **Charts**: Recharts
 - **Icons**: Lucide React
+- **PWA**: Service Worker, Web App Manifest
 - **Linting**: Biome.js
 - **Code Quality**: ESLint + Prettier
 
