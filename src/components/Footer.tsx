@@ -12,30 +12,31 @@ import {
   TrendingUp,
   Twitter,
 } from 'lucide-react';
+import { CookieManagerButton } from './CookieManagerButton';
 
 const footerLinks = {
   company: [
-    { label: 'About Us', href: '#about' },
+    { label: 'About Us', href: '/about' },
     { label: 'Careers', href: '#careers' },
     { label: 'Press', href: '#press' },
     { label: 'Blog', href: '#blog' },
   ],
   product: [
-    { label: 'Trading Platform', href: '#trading' },
+    { label: 'Trading Platform', href: '/trading' },
     { label: 'Mobile App', href: '#mobile' },
     { label: 'API Documentation', href: '#api' },
     { label: 'Pricing', href: '#pricing' },
   ],
   support: [
     { label: 'Help Center', href: '#help' },
-    { label: 'Contact Support', href: '#contact' },
+    { label: 'Contact Support', href: '/support' },
     { label: 'Status Page', href: '#status' },
     { label: 'Bug Reports', href: '#bugs' },
   ],
   legal: [
-    { label: 'Privacy Policy', href: '#privacy' },
-    { label: 'Terms of Service', href: '#terms' },
-    { label: 'Cookie Policy', href: '#cookies' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Cookie Policy', href: '/privacy#cookies' },
     { label: 'Compliance', href: '#compliance' },
   ],
 };
@@ -190,10 +191,14 @@ export function Footer() {
       <div className="border-t border-white/10 bg-gray-950">
         <div className="container-padding mx-auto py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
               <p className="text-gray-400 text-sm">
                 © 2024 CryptoFinance Pro. All rights reserved.
               </p>
+              <CookieManagerButton />
+            </div>
+            
+            <div className="flex items-center space-x-4">
               <div className="hidden lg:flex items-center space-x-4">
                 {socialLinks.map((social) => (
                   <motion.a
@@ -208,33 +213,17 @@ export function Footer() {
                   </motion.a>
                 ))}
               </div>
-            </div>
 
-            {/* Mobile Social Links */}
-            <div className="flex lg:hidden items-center space-x-4">
-              {socialLinks.map((social) => (
-                <motion.a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300"
-                >
-                  <social.icon className="w-4 h-4" />
-                </motion.a>
-              ))}
+              {/* Scroll to Top Button */}
+              <motion.button
+                onClick={scrollToTop}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white hover:shadow-lg transition-all duration-300"
+              >
+                <ArrowUp className="w-5 h-5" />
+              </motion.button>
             </div>
-
-            {/* Scroll to Top Button */}
-            <motion.button
-              onClick={scrollToTop}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white hover:shadow-lg transition-all duration-300"
-            >
-              <ArrowUp className="w-5 h-5" />
-            </motion.button>
           </div>
         </div>
       </div>

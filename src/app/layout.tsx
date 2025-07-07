@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { PWAInstaller } from '@/components/PWAInstaller';
 import { PWAStatusChecker } from '@/components/PWAStatusChecker';
+import { CookieConsent } from '@/components/CookieConsent';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -135,6 +136,7 @@ export default function RootLayout({
         <div id="modal-root" />
         <PWAInstaller />
         <PWAStatusChecker />
+        <CookieConsent />
       </body>
     </html>
   );
