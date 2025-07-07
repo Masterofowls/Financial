@@ -63,12 +63,20 @@ const cryptoList: CryptoCurrency[] = [
 
 export function CryptoChart() {
   const [selectedCrypto, setSelectedCrypto] = useState(cryptoList[0]);
-  const [chartData, setChartData] = useState(generateCryptoData(24));
+  const [chartData, setChartData] = useState<{ time: string; price: number; volume: number }[]>([]);
   const [timeframe, setTimeframe] = useState('24H');
+  const [mounted, setMounted] = useState(false);
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   });
+
+  // Prevent hydration mismatch by only rendering after component mounts
+  useEffect(() => {
+    setMounted(true);
+    // Use a fixed seed for initial data to prevent hydration mismatches
+    setChartData(generateCryptoData(24, 12345));
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,6 +99,27 @@ export function CryptoChart() {
   }, [selectedCrypto]);
 
   const timeframes = ['1H', '24H', '7D', '30D', '1Y'];
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <section id="markets" ref={ref} className="py-20 bg-gray-900/50">
+        <div className="container-padding mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold gradient-text mb-4">
+              Live Market Data
+            </h2>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+              Loading real-time cryptocurrency prices and charts...
+            </p>
+          </div>
+          <div className="crypto-card p-8 text-center">
+            <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto" />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },

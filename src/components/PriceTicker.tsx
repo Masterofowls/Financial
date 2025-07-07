@@ -13,6 +13,7 @@ interface CryptoPrice {
 }
 
 export function PriceTicker() {
+  const [mounted, setMounted] = useState(false);
   const [cryptos, setCryptos] = useState<CryptoPrice[]>([
     { symbol: 'BTC', name: 'Bitcoin', price: 45000, change24h: 2.5, volume24h: 28000000000 },
     { symbol: 'ETH', name: 'Ethereum', price: 2800, change24h: -1.2, volume24h: 15000000000 },
@@ -25,6 +26,11 @@ export function PriceTicker() {
   ]);
 
   const [isPaused, setIsPaused] = useState(false);
+
+  // Prevent hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Simulate real-time price updates
   useEffect(() => {
@@ -54,6 +60,18 @@ export function PriceTicker() {
     if (volume >= 1e6) return `$${(volume / 1e6).toFixed(1)}M`;
     return `$${volume.toLocaleString()}`;
   };
+
+  // Prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="bg-gray-900/90 backdrop-blur-sm border-y border-white/10 py-4 overflow-hidden">
+        <div className="flex justify-center items-center py-2">
+          <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full" />
+          <span className="ml-2 text-gray-400 text-sm">Loading market data...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

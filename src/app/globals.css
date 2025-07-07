@@ -70,11 +70,11 @@ body {
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-lg hover:scale-105;
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl hover:shadow-blue-500/25 hover:scale-105 transform;
   }
 
   .btn-secondary {
-    @apply bg-transparent border-2 border-white/20 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-white/10 hover:border-white/30;
+    @apply bg-transparent border-2 border-white/30 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:bg-white/10 hover:border-white/50 hover:shadow-lg;
   }
 }
 

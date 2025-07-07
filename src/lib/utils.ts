@@ -30,16 +30,20 @@ export function generateRandomPrice(basePrice: number, volatility = 0.05): numbe
   return basePrice * (1 + change);
 }
 
-export function generateCryptoData(length = 24) {
+export function generateCryptoData(length = 24, seed?: number) {
   const data = [];
-  let price = 45000 + Math.random() * 10000;
+  let price = 45000 + (seed ? Math.sin(seed) * 5000 + 5000 : Math.random() * 10000);
 
   for (let i = 0; i < length; i++) {
-    price = generateRandomPrice(price, 0.02);
+    // Use seed for deterministic generation if provided
+    const randomValue = seed ? Math.sin(seed + i) * 0.5 + 0.5 : Math.random();
+    const change = (randomValue - 0.5) * 2 * 0.02;
+    price = price * (1 + change);
+    
     data.push({
       time: new Date(Date.now() - (length - i) * 3600000).toISOString(),
       price: Number(price.toFixed(2)),
-      volume: Math.floor(Math.random() * 1000000000),
+      volume: Math.floor((seed ? Math.sin(seed + i + 100) * 0.5 + 0.5 : Math.random()) * 1000000000),
     });
   }
 

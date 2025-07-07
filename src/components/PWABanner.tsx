@@ -10,6 +10,7 @@ export function PWABanner() {
   const [isStandalone, setIsStandalone] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  // All hooks must be called before any early returns
   useEffect(() => {
     setIsMounted(true);
     
@@ -20,6 +21,16 @@ export function PWABanner() {
     // Check if iOS
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     setIsIOS(iOS);
+
+    // Check if already dismissed recently (within 7 days)
+    const dismissed = localStorage.getItem('pwa-banner-dismissed');
+    if (dismissed) {
+      const dismissedTime = Number.parseInt(dismissed, 10);
+      const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      if (dismissedTime > weekAgo) {
+        return; // Don't show banner if recently dismissed
+      }
+    }
 
     // Only show banner after user interaction and if not PWA
     // Make it less intrusive by requiring user to scroll down first
@@ -42,9 +53,6 @@ export function PWABanner() {
     }
   }, []);
 
-  // Don't render anything until mounted to prevent SSR issues
-  if (!isMounted || !showBanner || isStandalone) return null;
-
   const handleInstall = () => {
     if (isIOS) {
       // Show iOS install instructions
@@ -58,18 +66,8 @@ export function PWABanner() {
     localStorage.setItem('pwa-banner-dismissed', Date.now().toString());
   };
 
-  // Check if already dismissed recently (within 7 days)
-  useEffect(() => {
-    if (!isMounted) return;
-    const dismissed = localStorage.getItem('pwa-banner-dismissed');
-    if (dismissed) {
-      const dismissedTime = Number.parseInt(dismissed, 10);
-      const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      if (dismissedTime > weekAgo) {
-        setShowBanner(false);
-      }
-    }
-  }, [isMounted]);
+  // Don't render anything until mounted to prevent SSR issues
+  if (!isMounted || !showBanner || isStandalone) return null;
 
   return (
     <motion.div
